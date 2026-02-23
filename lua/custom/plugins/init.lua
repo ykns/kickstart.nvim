@@ -23,4 +23,28 @@ return {
       { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
     },
   },
+  {
+    'stevearc/oil.nvim',
+    ---@module 'oil'
+    ---@type oil.SetupOpts
+    opts = {},
+    config = function()
+      require('oil').setup()
+      vim.keymap.set('n', '<leader>oc', '<CMD>Oil<CR>', { desc = 'Oil: open current dir' })
+      vim.keymap.set('n', '<leader>or', function()
+        local root = vim.fn.finddir('.git', vim.fn.expand '%:p' .. ';')
+        if root == '' then
+          root = vim.fn.expand '%:p:h'
+        else
+          root = vim.fn.fnamemodify(root, ':h')
+        end
+        require('oil').open(root)
+      end, { desc = 'Open Oil.nvim at project root' })
+    end,
+    -- Optional dependencies
+    dependencies = { { 'nvim-mini/mini.icons', opts = {} } },
+    -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+    -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+    lazy = false,
+  },
 }
