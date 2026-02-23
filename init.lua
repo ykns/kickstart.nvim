@@ -167,7 +167,7 @@ vim.o.confirm = true
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 --  save file
-vim.keymap.set('n', '<C-s>', ':w<enter>', { desc = 'Save file' })
+vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = 'Save file' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
