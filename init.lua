@@ -618,6 +618,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'lua-language-server', -- Lua Language server
         'stylua', -- Used to format Lua code
+        'markdownlint',
+        'terraform',
         'golangci-lint',
         'goimports',
       })
