@@ -596,7 +596,7 @@ require('lazy').setup({
       --  See `:help lsp-config` for information about keys and how to configure
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         --
@@ -618,7 +618,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'lua-language-server', -- Lua Language server
         'stylua', -- Used to format Lua code
-        -- You can add other tools here that you want Mason to install
+        'golangci-lint',
+        'goimports',
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -688,6 +689,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        go = { 'goimports', 'gofmt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -853,12 +855,58 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    branch = 'main',
+    lazy = false,
+    build = ':TSUpdate',
     config = function()
-      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
-      require('nvim-treesitter').install(filetypes)
+      require('nvim-treesitter').install {
+        'bash',
+        'css',
+        'go',
+        'gomod',
+        'html',
+        'json',
+        'lua',
+        'make',
+        'markdown',
+        'markdown_inline',
+        'terraform',
+        'toml',
+        'tsx',
+        'typescript',
+        'yaml',
+      }
+
+      ---@param buf integer
+      ---@param language string
+      ---@return boolean
+      local function attach(buf, language)
+        -- check if parser exists before starting highlighter
+        if not vim.treesitter.language.add(language) then return end
+        vim.treesitter.start(buf, language)
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end
+
+      local availableLangs = require('nvim-treesitter').get_available()
       vim.api.nvim_create_autocmd('FileType', {
-        pattern = filetypes,
-        callback = function() vim.treesitter.start() end,
+        callback = function(args)
+          local buf, filetype = args.buf, args.match
+          local language = vim.treesitter.language.get_lang(filetype)
+          if not language then return end
+
+          local installed = require('nvim-treesitter').get_installed 'parsers'
+          if vim.tbl_contains(installed, language) then
+            -- parser is already installed attach
+            attach(buf, language)
+          elseif vim.tbl_contains(availableLangs, language) then
+            -- parser is not installed but available install it first then attach
+            require('nvim-treesitter').install(language):await(function() attach(buf, language) end)
+          else
+            -- parser is not installed or available try to attach in case
+            -- it was installed outside of nvim-treesitter
+            attach(buf, language)
+          end
+        end,
       })
     end,
   },
