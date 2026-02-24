@@ -3,27 +3,6 @@
 --
 -- See the kickstart.nvim README for more information
 
--- overcome floating window when pressing 'e'
--- this referenced in ~/.config/lazygit/config.yml
-function EditLineFromLazygit(file_path, line)
-  local path = vim.fn.expand '%:p'
-  if path == file_path then
-    vim.cmd(tostring(line))
-  else
-    vim.cmd('e ' .. file_path)
-    vim.cmd(tostring(line))
-  end
-end
-
-function EditFromLazygit(file_path)
-  local path = vim.fn.expand '%:p'
-  if path == file_path then
-    return
-  else
-    vim.cmd('e ' .. file_path)
-  end
-end
-
 return {
   {
     'kdheepak/lazygit.nvim',
@@ -35,6 +14,28 @@ return {
       'LazyGitFilter',
       'LazyGitFilterCurrentFile',
     },
+    config = function()
+      -- overcome floating window when pressing 'e'
+      -- this referenced in ~/.config/lazygit/config.yml
+      function EditLineFromLazygit(file_path, line)
+        local path = vim.fn.expand '%:p'
+        if path == file_path then
+          vim.cmd(tostring(line))
+        else
+          vim.cmd('e ' .. file_path)
+          vim.cmd(tostring(line))
+        end
+      end
+
+      function EditFromLazygit(file_path)
+        local path = vim.fn.expand '%:p'
+        if path == file_path then
+          return
+        else
+          vim.cmd('e ' .. file_path)
+        end
+      end
+    end,
     -- optional for floating window border decoration
     dependencies = {
       'nvim-lua/plenary.nvim',
