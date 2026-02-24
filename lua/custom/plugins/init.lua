@@ -87,4 +87,26 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
   },
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('toggleterm').setup {
+        open_mapping = [[<c-t>]],
+        direction = 'float',
+        float_opts = {
+          border = 'curved',
+          winblend = 0,
+          highlights = {
+            border = 'Normal',
+            background = 'Normal',
+          },
+        },
+        persist_size = true,
+        start_in_insert = true,
+        insert_mappings = true,
+        close_on_exit = true,
+      }
+    end,
+  },
 }
