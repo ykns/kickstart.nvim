@@ -413,6 +413,28 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        --
+        defaults = {
+          file_ignore_patterns = { 'node_modules/', '.git/', '.venv/', '.yarn/' },
+          preview = { hide_on_startup = true },
+          hidden = true,
+          mappings = {
+            i = {
+              ['<C-h>'] = require('telescope.actions.layout').toggle_preview,
+            },
+          },
+          wrap_results = true,
+        },
+        pickers = {
+          live_grep = {
+            file_ignore_patterns = { 'node_modules/', '.git/', '.venv/', '.yarn/' },
+            additional_args = function(_) return { '--hidden' } end,
+          },
+          find_files = {
+            file_ignore_patterns = { 'node_modules/', '.git/', '.venv/', '.yarn/' },
+            hidden = true,
+          },
+        },
         extensions = {
           ['ui-select'] = { require('telescope.themes').get_dropdown() },
         },
