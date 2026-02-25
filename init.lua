@@ -1,3 +1,18 @@
+_G.log = function(...)
+  local log_file = io.open(vim.fn.expand '~/.config/nvim/debug.log', 'a')
+  if log_file == nil then return end
+
+  local args = { ... }
+  for _, v in ipairs(args) do
+    if type(v) == 'table' then
+      log_file:write(vim.inspect(v) .. '\n')
+    else
+      log_file:write(tostring(v) .. '\n')
+    end
+  end
+  log_file:close()
+end
+
 --[[
 
 =====================================================================
