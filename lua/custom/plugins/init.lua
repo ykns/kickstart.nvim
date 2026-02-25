@@ -88,6 +88,7 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
   },
+  -- TODO: remove once happy with terminal.lua
   {
     'akinsho/toggleterm.nvim',
     version = '*',
