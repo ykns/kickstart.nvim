@@ -205,15 +205,29 @@ vim.keymap.set('n', '<leader>xD', '<cmd>bd!<CR>', { desc = 'Force close buffer' 
 vim.keymap.set('n', '<leader>xt', '<cmd>tabclose<CR>', { desc = 'Close tab' })
 vim.keymap.set('n', '<leader>xs', '<cmd>on<CR>', { desc = 'Close split' })
 vim.keymap.set('n', '<leader>xS', '<cmd>on!<CR>', { desc = 'Force close split' })
+
+-- given a buffer number, return true if it is a terminal buffer
+local function is_terminal_buffer(buf_number)
+  local name = vim.api.nvim_buf_get_name(buf_number)
+  return name:match '^term://'
+end
+
 vim.keymap.set('n', '<leader>xe', function()
   local cwd = vim.fn.getcwd()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_loaded(buf) and not Is_terminal_buffer(buf) then
+    if vim.api.nvim_buf_is_loaded(buf) and not is_terminal_buffer(buf) then
       local bufpath = vim.api.nvim_buf_get_name(buf)
       if bufpath ~= '' and not bufpath:find(cwd, 1, true) then vim.api.nvim_buf_delete(buf, { force = false }) end
     end
   end
 end, { desc = 'Close all non-term buffers external to working directory' })
+
+vim.keymap.set('n', '<leader>xat', function()
+  local cwd = vim.fn.getcwd()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if is_terminal_buffer(buf) then vim.api.nvim_buf_delete(buf, { force = true }) end
+  end
+end, { desc = 'Close all term buffers' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
